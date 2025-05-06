@@ -1,17 +1,24 @@
-# ws_server.py
-import asyncio
-import websockets
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+import random
+import threading
+import time
 
-async def handler(websocket):  # ⚠️ HANYA websocket, tanpa path!
-    print("[Server] Menunggu data dari client...")
-    async for message in websocket:
-        print(f"[Server] Data diterima: {message} °C")
-        await websocket.send(f"Server menerima suhu: {message} °C")
+app = Flask(__name__)
+socketio = SocketIO(app)
 
-async def main():
-    print("[Server] Menjalankan WebSocket server di ws://localhost:8765")
-    async with websockets.serve(handler, "localhost", 8765):
-        await asyncio.Future()
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-if __name__ == "__main__":
-    asyncio.run(main())
+def send_sensor_data():
+    while True:
+        suhu = round(random.uniform(25.0, 35.0), 2)
+        socketio.emit('sensor_data', {'suhu': suhu})
+        time.sleep(2)
+
+# Jalankan thread untuk kirim data otomatis
+threading.Thread(target=send_sensor_data, daemon=True).start()
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True)
