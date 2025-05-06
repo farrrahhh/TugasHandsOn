@@ -10,7 +10,7 @@ Repository ini berisi tugas praktikum (hands-on) kami dalam mengimplementasikan 
 - Farah Aulia / 18222096
 - Ervina Limka / 18222100
 
-**Struktur Folder**
+**Struktur Folder:**
 ```
 📁 TugasHandsOn
     📁 docs
