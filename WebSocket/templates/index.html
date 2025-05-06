@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sensor Realtime</title>
+</head>
+<body>
+    <h2>Data Sensor Suhu</h2>
+    <ul id="data-list"></ul>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('sensor_data', function(data) {
+            const li = document.createElement("li");
+            li.textContent = "Suhu: " + data.suhu + " °C";
+            document.getElementById("data-list").appendChild(li);
+        });
+    </script>
+</body>
+</html>
