@@ -1,20 +1,26 @@
-# mqtt_subscriber.py
 import paho.mqtt.client as mqtt
+import time
 
-broker = "test.mosquitto.org"
-port = 1883
-topic = "reksti/suhu"
-
-def on_connect(client, userdata, flags, rc):
-    print("[Subscriber] Terhubung ke broker")
-    client.subscribe(topic)
+def on_connect(client, userdata, flags, reason_code, properties):
+    if reason_code == 0:
+        print("Connected to broker!")
+        client.subscribe("web_topic")
+    else:
+        print(f"Connection failed! Code: {reason_code}")
 
 def on_message(client, userdata, msg):
-    print(f"[Subscriber] Menerima dari {msg.topic}: {msg.payload.decode()} °C")
+    print(f"Received: {msg.payload.decode()}")
 
-client = mqtt.Client()
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, "Subscriber_V2")
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect(broker, port, 60)
-client.loop_forever()
+try:
+    client.connect("localhost", 1883)
+    client.loop_forever()
+except ConnectionRefusedError:
+    print("\nERROR: Broker tidak aktif!")
+    print("1. Pastikan Mosquitto sudah diinstall")
+    print("2. Jalankan broker di terminal: mosquitto -v")
+except KeyboardInterrupt:
+    print("\nSubscriber dihentikan")
